@@ -1,0 +1,72 @@
+from TrainingSetsUtil import *
+from tkinter import Button, Label,Tk,messagebox
+#import tkMessageBox
+root=Tk()
+import mysql.connector as mysql
+from fetch_table import getInbox,getText
+from test import seperator
+box=[]
+mydb=mysql.connect(host="localhost",username="root",password="",database="swordmail")
+mycur=mydb.cursor()
+getInbox(mycur,box)
+a=getText(mycur,box)
+def classify(message, training_set, prior = 0.5, c = 3.7e-4):
+    msg_terms = get_words(message)
+    msg_probability = 1
+    for term in msg_terms:        
+        if term in training_set:
+            msg_probability *= training_set[term]
+        else:
+            msg_probability *= c
+            
+    return msg_probability * prior
+
+b=seperator(a)
+#print(a)
+#print("\n\n\n----------------------------------------------------------------------------------")
+#print(b[2])
+#msges=b[2]
+#print(b)
+#print(msges)
+print("\n\n\n")
+data=[]
+def calculate(a):
+    for x in b:
+        #print(x)
+        temp=[]
+        for i in range(len(x)):
+            temp.append(x[i])
+        data.append(temp)
+        #print(msg)
+calculate(a)
+def activate():
+    msg_data=data[3]
+#print(len(data[0]))
+    for i in range(len(msg_data)):
+    #print(msg_data[i])
+        temp=0
+        mail_msg=msg_data[i]
+        spam_probability = classify(mail_msg, spam_training_set, 0.2)
+        ham_probability = classify(mail_msg, ham_training_set, 0.8)
+        if spam_probability > ham_probability:
+            #print('This mail has been classified as SPAM.')
+            temp=1
+        else:
+            #print('This mail has been classified as HAM.')
+            temp=0
+        temp_cur=mydb.cursor()
+        temp_table_name=data[1][i]+"_inbox"
+        temp_table_id=data[0][i]
+    #temp_cur.execute("update alansam_inbox set spam=1 where ibox_id=3")
+    #mydb.commit()
+        temp_cur.execute(f"update {temp_table_name} set spam={temp} where ibox_id={temp_table_id}")
+        mydb.commit()
+        print(temp_table_id,temp_table_name,temp)
+        print("---------------")
+    messagebox.showinfo("swordmail","Classifier activated Successfully")
+    #temp_cur.execute(f'update {}')
+my_butt=Button(root,text="Activate Classifier",command=activate).pack()
+root.mainloop()
+#print(data[3][i][i])
+
+
