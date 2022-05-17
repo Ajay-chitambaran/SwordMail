@@ -21,7 +21,10 @@ String username=request.getParameter("username");
 //out.println(request.getInputStream().readAllBytes()s);
 String type=request.getParameter("type");
 String index=request.getParameter("index");
-out.println(username+type+index);
+String fromm=request.getParameter("from_addr");
+String subject=request.getParameter("subject");
+String content=request.getParameter("cont");
+out.println(username+type+index+fromm+subject+content);
 String driver = "com.mysql.jdbc.Driver";
 try {
 	Class.forName(driver);
@@ -37,6 +40,7 @@ connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/swordmail"
 statement=connection.createStatement();
 String[] arrOfStr= username.split("@");
 String user_nam=arrOfStr[0]+"_inbox";
+String user_nam2=arrOfStr[0]+"_bin";
 System.out.println(user_nam);
 System.out.println("index:"+index);
 String sql="select spam from "+user_nam+" where ibox_id="+index;
@@ -56,24 +60,68 @@ if(buffer.equals("3") && type.equals("1"))
 	buffer="1";
 	System.out.println(buffer);
 	String sql2="update "+user_nam+" set spam="+buffer+" where ibox_id="+index;
-	statement.executeQuery(sql2);
+	pst = connection.prepareStatement(sql2);
+	pst.executeUpdate();
+	response.sendRedirect(request.getContextPath()+"/home.jsp");
 }
 else if(buffer.equals("0") && type.equals("1"))
 {
 	buffer="1";
 	System.out.println(buffer);
 	String sql2="update "+user_nam+" set spam="+buffer+" where ibox_id="+index;
-	statement.executeQuery(sql2);
+	pst = connection.prepareStatement(sql2);
+	pst.executeUpdate();
+	response.sendRedirect(request.getContextPath()+"/home.jsp");
 }
-else{
+else if(buffer.equals("1") && type.equals("1")){
 	buffer="1";
 	System.out.println(buffer);
 	String sql2="update "+user_nam+" set spam="+buffer+" where ibox_id="+index;
-	statement.executeQuery(sql2);
+	pst = connection.prepareStatement(sql2);
+	pst.executeUpdate();
+	response.sendRedirect(request.getContextPath()+"/home.jsp");
 }
 
 
+if(buffer.equals("3") && type.equals("2"))
+{
+	buffer="0";
+	System.out.println(buffer);
+	String sql2="update "+user_nam+" set spam="+buffer+" where ibox_id="+index;
+	pst = connection.prepareStatement(sql2);
+	pst.executeUpdate();
+	response.sendRedirect(request.getContextPath()+"/home.jsp");
+}
+else if(buffer.equals("1") && type.equals("2"))
+{
+	buffer="0";
+	System.out.println(buffer);
+	String sql2="update "+user_nam+" set spam="+buffer+" where ibox_id="+index;
+	pst = connection.prepareStatement(sql2);
+	pst.executeUpdate();
+	response.sendRedirect(request.getContextPath()+"/home.jsp");
+}
+else if(buffer.equals("0") && type.equals("2"))
+{
+	buffer="1";
+	System.out.println(buffer);
+	String sql2="update "+user_nam+" set spam="+buffer+" where ibox_id="+index;
+	pst = connection.prepareStatement(sql2);
+	pst.executeUpdate();
+	response.sendRedirect(request.getContextPath()+"/home.jsp");
+}
 
+if(type.equals("3"))
+{
+	pst=connection.prepareStatement("INSERT INTO "+user_nam2+"( `user_id`, `fromm`, `subject`,`message`, `spam`) VALUES (?,?,?,?,0);");
+	pst.setString(1,user_nam);
+	pst.setString(2,fromm);
+	pst.setString(3,subject);
+	pst.setString(4,content);
+	pst.executeUpdate();
+	statement.executeUpdate("delete from "+user_nam+" where ibox_id="+index);
+	response.sendRedirect(request.getContextPath()+"/home.jsp");
+}
 
 %>
 </body>
