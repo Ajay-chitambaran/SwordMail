@@ -67,6 +67,8 @@ public class DBsignup extends HttpServlet {
  			pst.executeUpdate();
  			pst=con.prepareStatement("CREATE TABLE "+arrOfStr[0]+"_spambox"+"(spbox_id int PRIMARY KEY AUTO_INCREMENT,user_id varchar(255) default '"+arrOfStr[0]+"',fromm varchar(255),subject varchar(255),message varchar(10240),spam int)");
  			pst.executeUpdate();
+ 			pst=con.prepareStatement("CREATE TABLE "+arrOfStr[0]+"_bin"+"(bin_id int PRIMARY KEY AUTO_INCREMENT,user_id varchar(255) default '"+arrOfStr[0]+"',fromm varchar(255),subject varchar(255),message varchar(10240),spam int)");
+ 			pst.executeUpdate();
  			con.close();
  			//response.sendRedirect(request.getContextPath()+"/index.jsp");
  			

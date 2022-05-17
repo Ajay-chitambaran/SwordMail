@@ -9,6 +9,8 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
@@ -25,10 +27,11 @@
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light" id="sword-home"><h3 id="sword-home">Swordmail</h3></div>
                 <div class="list-group list-group-flush">
-                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="compose">Compose</a>
-                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="inbox" >Inbox</p>
-                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="sentbox">Sentbox</a>
-                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="spam">Spambox</a>
+                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="compose"><a>Compose</a></p>
+                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="inbox" ><a>Inbox</a></p>
+                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="sentbox">Sent</a></p>
+                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="spam">Spam</a></p>
+                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="spam">Bin</a></p>
                 </div>
             </div>
             <!-- Page content wrapper-->
@@ -36,16 +39,17 @@
                 <!-- Top navigation-->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                     <div class="container-fluid">
-                        <button class="btn btn-primary" id="sidebarToggle">AI Mode</button>
+                        <button class="btn btn-primary" onclick="activate()" id="sidebarToggle" >AI Mode</button>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                                 <li class="nav-item active"><a class="nav-link" href="home.jsp">Refresh</a></li>
-                                <li class="nav-item"><a class="nav-link" href="signup.jsp">Add user</a></li>
+                                <!--  li class="nav-item"><a class="nav-link" href="signup.jsp">Add user</a></li-->
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%=session.getAttribute("username") %></a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item" href="#!">AI settings</a>
+                                        <a class="dropdown-item" href="signup.jsp">Add user</a>
                                         <a class="dropdown-item" href="#!">General settings</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="logout.jsp">logout</a>
@@ -106,23 +110,23 @@
                                       </div>
                                   </div>
                                   <!-- inbox -->
-                                  <div class="modal-content" id="inbox_block">
+                                  <div class="modal-content px-5" id="inbox_block">
                                       <div class="modal-header">
                                           <h4 class="modal-title">Inbox</h4>
                                           </div>
                                           <div id="i_table">
                                           <table class="table table-hover" id="t_ibox">
-                                          <tr>
+                                          <tr onclick="myFunction()">
                                           <th>#</th>
                                           <th>From</th>
                                           <th>Subject</th>
                                           <th>Message</th>
-                                         <th>Spam</th>
-                                         <th>Action</th>
+                                         <th>Spam / Ham</th>
+                                         <!-- th>Action</th-->
                                           </tr>
                                           <%
                                           		String user=session.getAttribute("username").toString();
-                                          		
+                                          		//boolean g_flag=true;
                                           		String[] arrOfStr=user.split("@");
                                           		String user_name=arrOfStr[0]+"_inbox";
                                           		Connection con;
@@ -135,18 +139,35 @@
                                         			//pst.setString(1,user_name);
                                         			rs=pst.executeQuery();
                                         			while(rs.next()){
+                                        				//g_flag=false;
                                         				%>
-                                        				<tr class="table-hover my-3" onclick="myFunction(this)">
+                                        				<tr class="table-hover my-3" onclick="show_content(this)">
                                         				<td class="mp-3"><%=rs.getString(1) %></td>
                                         				<td><%=rs.getString(3) %></td>
                                         				<td><%=rs.getString(4) %></td>
                                         				<td><%=rs.getString(5) %></td>
-                                        				<td><%=rs.getString(6) %></td>
-                                        				<td><button type="button" class="btn btn-success">(-) Spam</button>
-<button type="button" class="btn btn-danger">(+) Spam</button></td>
+                                        				<td><%
+                                        				String spm=rs.getString(6);
+                                        				if(spm.equals("3")){
+                                        					out.println("<i class='fa fa-warning' style='font-size:35px;color:blue'></i>");
+                                        				}
+                                        				else if(spm.equals("1")){
+                                        					out.println("<i class='fa fa-warning' style='font-size:35px;color:red'></i>");
+                                        				}
+                                        				else{
+                                        					out.println("<i class='fa fa-check-circle' style='font-size:48px;color:green'></i>");
+                                        				}
+                                        				%></td>
+                                        				<!-- td><button type="button" class="btn btn-success" onclick="spamremover(this)">(-) Spam</button>
+<button type="button" class="btn btn-danger">(+) Spam</button></td-->
                                         				</tr>
                                         				<%
                                          		}
+                                        			//if(g_flag)
+                                        			//{
+                                        				//out.println("<div class='modal-header'><h4 class='modal-title'>Nothing to Show :)</h4></div>");
+                                        			//}
+                                        		
                                         			} 
                                         			catch(ClassNotFoundException e) {
                                         				// TODO Auto-generated catch block
@@ -187,17 +208,15 @@
                                   <!-- sentbox -->
                                       <div class="modal-content" id="sentbox_block">
                                       <div class="modal-header">
-                                          <h4 class="modal-title">Sentbox</h4>
+                                          <h4 class="modal-title">Sent</h4>
                                       </div>
                                       <div id="s_table">
-                                      <table class="table table-hover">
-                                          <tr>
+                                      <table class="table table-hover" id="t_sbox">
+                                          <tr id="heading">
                                           <th>#</th>
                                           <th>To</th>
                                           <th>Subject</th>
                                           <th>Message</th>
-                                         <th>Spam</th>
-                                         <th>Action</th>
                                           </tr>
                                           <%
                                           		String user2=session.getAttribute("username").toString();
@@ -215,17 +234,14 @@
                                         			rs=pst.executeQuery();
                                         			while(rs.next()){
                                         				%>
-                                        				<tr  class="table-hover my-3" ">
+                                        				<tr  class="table-hover my-3" onclick="show_content(this)">
                                         				<td class="mp-3"><%=rs.getString(1) %></td>
                                         				<td><%=rs.getString(3) %></td>
                                         				<td><%=rs.getString(4) %></td>
                                         				<td><%=rs.getString(5) %></td>
-                                        				<td><%=rs.getString(6) %></td>
-                                        				<td><button type="button" class="btn btn-success">(-) Spam</button>
-															<button type="button" class="btn btn-danger">(+) Spam</button></td>
-                                        				</tr>
                                         				<%
                                          		}
+                                        			
                                         			} 
                                         			catch(ClassNotFoundException e) {
                                         				// TODO Auto-generated catch block
@@ -314,12 +330,348 @@
         	  //alert(i);
         	}*/
         //alert(rows);
+        var a=0;
+        function activate(){
+        	a=a+1
+        	if(a%2==1){
+        	alert("AI Activated")
+        	}
+        	else
+        		{
+        		alert("AI Deactivated")
+        		}
+        }
+    	var i_tab=document.getElementById('t_ibox');
+    	  /*alert("Row index is: " + x.rowIndex);
+    	  x.setAttribute('id', x.rowIndex);*/
+    	  try{
+    		if(i_tab.rows.item(1).innerHTML){
+    			console.log(i_tab.rows.item(1).innerHTML);
+    		}
+    	  }
+    	catch(err){
+    		i_tab.style.display="none";
+    		var empty_msg=document.createElement("div");
+    		var e_msg=document.createElement("h2");
+    		e_msg.innerHTML="Nothing to show :)";
+    		empty_msg.appendChild(e_msg);
+    		var i_block=document.getElementById("i_table");
+    		i_block.appendChild(empty_msg);	
+    			//alert("catched"+err);
+    	}
+    	
+    	var s_tab=document.getElementById('t_sbox');
+  	  /*alert("Row index is: " + x.rowIndex);
+  	  x.setAttribute('id', x.rowIndex);*/
+  	  try{
+  		if(s_tab.rows.item(1).innerHTML){
+  			console.log(s_tab.rows.item(1).innerHTML);
+  		}
+  	  }
+  	catch(err){
+  		s_tab.style.display="none";
+  		var empty_msg=document.createElement("div");
+  		var e_msg=document.createElement("h2");
+  		e_msg.innerHTML="Nothing to show :)";
+  		empty_msg.appendChild(e_msg);
+  		var i_block=document.getElementById("s_table");
+  		i_block.appendChild(empty_msg);	
+  			//alert("catched"+err);
+  	}
         
-        function myFunction(x) {
-          	  alert("Row index is: " + x.rowIndex);
+        /*function myFunction() {
+        	alert("myfunworking");
+        	var i_tab=document.getElementById('t_ibox');
+          	  /*alert("Row index is: " + x.rowIndex);
           	  x.setAttribute('id', x.rowIndex);
-          	  alert(x.id);
+          	  try{
+          		if(i_tab.rows.item(1).innerHTML){
+          			alert(i_tab.rows.item(1).innerHTML);
+          		}
+          	  }
+          	catch(err){
+          		i_tab.style.display="none";
+          		var empty_msg=document.createElement("div");
+          		var e_msg=document.createElement("h2");
+          		e_msg.innerHTML="Nothing to show :)";
+          		empty_msg.appendChild(e_msg);
+          		var i_block=document.getElementById("inbox_block");
+          		i_block.appendChild(empty_msg);
+          		
+          			//alert("catched"+err);
+          	}
           }
+        */
+        function show_content(x){
+        	alert(x.parentNode.parentNode.id)
+        	if(x.parentNode.parentNode.id=="t_ibox"){
+           	 alert('inbox');
+           	 //top layer navigation
+           	var inbox_block = document.getElementById("inbox_block");
+        	inbox_block.style.display="None";
+        	var sent_block=document.getElementById("sentbox_block");
+        	sent_block.style.display="None";
+        	var main_block=document.getElementById("main-block");
+        	//back button
+        	var back_butt=document.createElement("BUTTON");
+        	back_butt.setAttribute('id','butt_id');
+        	back_butt.innerHTML="< Back ";
+        	back_butt.setAttribute('class','btn btn-info px-3');
+        	main_block.appendChild(back_butt);
+        	//spam button
+        	var addSpam=document.createElement("BUTTON");
+        	addSpam.innerHTML="Mark as Spam ";
+        	addSpam.setAttribute('type','submit');
+        	addSpam.setAttribute('class','btn btn-danger');
+        	main_block.appendChild(addSpam);
+        	//remove spam utton
+        	var remSpam=document.createElement("BUTTON");
+        	remSpam.innerHTML="Mark as Not Spam ";
+        	remSpam.setAttribute('class','btn btn-success');
+        	main_block.appendChild(remSpam);
+        	
+        	//msg content
+        	
+        	var from_div=document.createElement("div");
+        	from_div.setAttribute('id','content_div');
+        	var from_addr_h=document.createElement("h5");
+        	from_addr_h.innerHTML="From:"
+        	var from_addr=document.createElement("p");
+        	from_addr.setAttribute('class','modal-body');
+        	from_addr.innerHTML=x.cells[1].innerHTML;
+        	from_addr_h.appendChild(from_addr);
+        	
+        	var subj=document.createElement("h5");
+        	subj.innerHTML="subject:";
+        	var sub_content=document.createElement("p");
+        	sub_content.setAttribute('class','modal-body');
+        	sub_content.innerHTML=x.cells[2].innerHTML;
+        	subj.appendChild(sub_content);
+        	
+        	var msg=document.createElement("h5");
+        	msg.innerHTML="Message:"
+        	var msg_cont=document.createElement("p");
+        	msg_cont.setAttribute('class','modal-body');
+        	msg_cont.innerHTML=x.cells[3].innerHTML;
+        	msg.appendChild(msg_cont);
+        	
+        	var classi=document.createElement("h5");
+        	classi.innerHTML="Classified as :";
+        	var classi_cont=document.createElement("p");
+        	classi_cont.setAttribute('class','modal-body');
+        	classi_cont.innerHTML=x.cells[4].innerHTML;
+    		classi.appendChild(classi_cont);
+    		
+    		
+    		//linking message components
+    		from_div.appendChild(from_addr_h);
+        	from_div.appendChild(subj);
+        	from_div.appendChild(msg);
+        	from_div.appendChild(classi);
+        	main_block.appendChild(from_div);
+    		
+    		
+    		//back button function
+    		
+    		back_butt.onclick=function(){
+    			inbox_block.style.display="block";
+        		from_div.style.display="None";
+        		back_butt.style.display="None";
+        		addSpam.style.display="None";
+        		remSpam.style.display="None";
+        		sent_block.style.display="None";
+    			
+    		}
+    		
+    		//add spam function
+    		
+				addSpam.onclick=function(){
+        		var form1 = document.createElement("form");
+        	    form1.setAttribute("method", "post");
+        	    form1.setAttribute("action", "spamconverter.jsp");
+        	    form1.setAttribute("id", "frm-12");
+        	    var helper=1;
+        	    var field1= document.createElement("INPUT");
+        	    field1.setAttribute("value","<%=session.getAttribute("username")%>");
+        	    field1.setAttribute("name","username");
+        	    field1.setAttribute("id","username");
+        	    //field1.setAttribute("type", "hidden");
+        	    
+        	    var field2= document.createElement("INPUT");
+        	    field2.setAttribute("name","type");
+        	    field2.setAttribute("value",helper);
+        	    //field2.setAttribute("type", "hidden");
+        	    
+        	    var field3= document.createElement("INPUT");
+        	    field3.setAttribute("name","index");
+        	    field3.setAttribute("value",x.cells[0].innerHTML);
+        	    //field3.setAttribute("type", "hidden");
+        	    //alert(field1.value);
+        	    document.body.appendChild(form1);
+        	    form1.appendChild(field1);
+        	    form1.appendChild(field2);
+        	    form1.appendChild(field3);
+        	    form1.submit();
+    		
+        	    
+        	
+           	}// add spam closes
+    		
+    		
+    		
+    		}//inbox_closes
+    		else if(x.parentNode.parentNode.id=="t_sbox"){
+        		alert("sentbox");
+        		var inbox_block = document.getElementById("inbox_block");
+            	inbox_block.style.display="None";
+            	var sent_block=document.getElementById("sentbox_block");
+            	sent_block.style.display="None";
+            	var main_block=document.getElementById("main-block");
+            	//back button
+            	var back_butt=document.createElement("BUTTON");
+            	back_butt.setAttribute('id','butt_id');
+            	back_butt.innerHTML="< Back ";
+            	back_butt.setAttribute('class','btn btn-info px-3');
+            	main_block.appendChild(back_butt);
+            	
+            	var from_div=document.createElement("div");
+            	from_div.setAttribute('id','content_div');
+            	var from_addr_h=document.createElement("h5");
+            	from_addr_h.innerHTML="From:"
+            	var from_addr=document.createElement("p");
+            	from_addr.setAttribute('class','modal-body');
+            	from_addr.innerHTML=x.cells[1].innerHTML;
+            	from_addr_h.appendChild(from_addr);
+            	
+            	var subj=document.createElement("h5");
+            	subj.innerHTML="subject:";
+            	var sub_content=document.createElement("p");
+            	sub_content.setAttribute('class','modal-body');
+            	sub_content.innerHTML=x.cells[2].innerHTML;
+            	subj.appendChild(sub_content);
+            	
+            	var msg=document.createElement("h5");
+            	msg.innerHTML="Message:"
+            	var msg_cont=document.createElement("p");
+            	msg_cont.setAttribute('class','modal-body');
+            	msg_cont.innerHTML=x.cells[3].innerHTML;
+            	msg.appendChild(msg_cont);
+            	
+            	/*var classi=document.createElement("h5");
+            	classi.innerHTML="Classified as :";
+            	var classi_cont=document.createElement("p");
+            	classi_cont.setAttribute('class','modal-body');
+            	classi_cont.innerHTML=x.cells[4].innerHTML;
+        		classi.appendChild(classi_cont);*/
+        		
+        		
+        		//linking message components
+        		from_div.appendChild(from_addr_h);
+            	from_div.appendChild(subj);
+            	from_div.appendChild(msg);
+            	//from_div.appendChild(classi);
+            	main_block.appendChild(from_div);
+        		
+    		}
+        	    
+        	}//show content ends here
+        	
+        	
+        	/*var remSpam=document.createElement("BUTTON");
+        	remSpam.innerHTML="Mark as Not Spam ";
+        	remSpam.setAttribute('class','btn btn-success');
+        	main_block.appendChild(remSpam);*/
+        	
+        	
+        	/*var from_div=document.createElement("div");
+        	var from_addr_h=document.createElement("h5");
+        	from_addr_h.innerHTML="From:"
+        	var from_addr=document.createElement("p");
+        	from_addr.setAttribute('class','modal-body');
+        	from_addr.innerHTML=x.cells[1].innerHTML;
+        	from_addr_h.appendChild(from_addr);
+        	
+        	var subj=document.createElement("h5");
+        	subj.innerHTML="subject:";
+        	var sub_content=document.createElement("p");
+        	sub_content.setAttribute('class','modal-body');
+        	sub_content.innerHTML=x.cells[2].innerHTML;
+        	subj.appendChild(sub_content);
+        	
+        	var msg=document.createElement("h5");
+        	msg.innerHTML="Message:"
+        	var msg_cont=document.createElement("p");
+        	msg_cont.setAttribute('class','modal-body');
+        	msg_cont.innerHTML=x.cells[3].innerHTML;
+        	msg.appendChild(msg_cont);
+        	
+        	var classi=document.createElement("h5");
+        	classi.innerHTML="Classified as :";
+        	var classi_cont=document.createElement("p");
+        	classi_cont.setAttribute('class','modal-body');*/
+        	//alert(x.cells[3].innerHTML);
+        	
+        	
+        	        	
+        	
+        	//from_div.appendChild(from_addr_h);
+        	//from_div.appendChild(subj);
+        	//from_div.appendChild(msg);
+        	//from_div.appendChild(classi);
+        	//main_block.appendChild(from_div);
+        	/*back_butt.onclick=function(){
+        		if(x.parentNode.parentNode.id=="t_ibox"){
+        			//alert("inbox");
+        			inbox_block.style.display="block";
+            		from_div.style.display="None";
+            		back_butt.style.display="None";
+            		addSpam.style.display="None";
+            		remSpam.style.display="None";
+            		sent_block.style.display="None";
+        		}
+        		
+        	if(x.parentNode.parentNode.id=="t_sbox"){
+        		//alert("sentbox");
+        		sent_block.style.display="block";
+        		inbox_block.style.display="None";
+        		from_div.style.display="None";
+        		back_butt.style.display="None";
+        		addSpam.style.display="None";
+        		remSpam.style.display="None";
+        	}
+        		
+        		//history.back();
+        	}*/
+        	
+        	//alert();
+        	
+        //}
+        /*function spamadder(x){
+        	var data=x;
+        	alert("working..");
+        	$.ajax({
+      		  type:'POST',
+      		  url:'Spamupdate',
+      		  data:data,
+      		  dataType:'JSON',
+      		  success:function(data){
+      			 msg=data[0].msg 
+      			 if(msg==1)
+      				 {
+      				 alert("one is working");
+      				 window.location.replace('index.jsp');
+      				 }
+      			 else{
+      				 alert("failed");
+      			 }
+      		  }
+        }
+        )}*/
+        function avoider(x){
+        alert(x);	
+        	
+        }
+        
        var i=0;
         var first_block=document.getElementById('first_block');
         var compose_butt=document.getElementById('compose');
@@ -339,11 +691,17 @@
 		sentbox_block.style.display="none";
 		spambox_block.style.display="none";
         compose_butt.onclick=function(){
+        	//avoider(this);
         	first_block.style.display="none";
         	compose_block.style.display="block";
         	inbox_block.style.display="none";
         	sentbox_block.style.display="none";
         	spambox_block.style.display="none";
+        	var temp=document.getElementById('content_div');
+        	alert(temp);
+        	temp.style.display="none";
+        	var butt_ids=document.getElementById('butt_id');
+        	butt_ids.style.display='none';
         	
         }
         inbox_butt.onclick=function(){
@@ -352,6 +710,11 @@
         	inbox_block.style.display="block";
         	sentbox_block.style.display="none";
         	spambox_block.style.display="none";
+        	var temp=document.getElementById('content_div');
+        	alert(temp);
+        	temp.style.display="none";
+        	var butt_ids=document.getElementById('butt_id');
+        	butt_ids.style.display='none';
         	
         }
         sent_butt.onclick=function(){
@@ -360,6 +723,13 @@
         	inbox_block.style.display="none";
         	sentbox_block.style.display="block";
         	spambox_block.style.display="none";
+        	var temp=document.getElementById('content_div');
+        	alert(temp);
+        	temp.style.display="none";
+        	var butt_ids=document.getElementById('butt_id');
+        	butt_ids.style.display='none';
+        	
+        	
         	
         }
         spam_butt.onclick=function(){
@@ -368,6 +738,12 @@
         	inbox_block.style.display="none";
         	sentbox_block.style.display="none";
         	spambox_block.style.display="block";
+        	var temp=document.getElementById('content_div');
+        	alert(temp);
+        	temp.style.display="none";
+        	var butt_ids=document.getElementById('butt_id');
+        	butt_ids.style.display='none';
+        	
         	
         }
         icon_butt.onclick=function(){
@@ -376,6 +752,12 @@
         	inbox_block.style.display="none";
         	sentbox_block.style.display="none";
         	spambox_block.style.display="none";
+        	var temp=document.getElementById('content_div');
+        	alert(temp);
+        	temp.style.display="none";
+        	var butt_ids=document.getElementById('butt_id');
+        	butt_ids.style.display='none';
+        	
         	
         }
         var msg=null;

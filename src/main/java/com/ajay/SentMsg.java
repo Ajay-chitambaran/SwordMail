@@ -75,7 +75,7 @@ public class SentMsg extends HttpServlet {
 				pst.setString(1, sess_user);
 				pst.setString(2, subject);
 				pst.setString(3, message);
-				pst.setString(4, "0");
+				pst.setString(4, "3");
 				pst.executeUpdate();
 				String[] arrOfStr2= sess_user.split("@");
 				String user_name2=arrOfStr2[0]+"_sentbox";
@@ -85,7 +85,7 @@ public class SentMsg extends HttpServlet {
 				pst.setString(1, username);
 				pst.setString(2, subject);
 				pst.setString(3, message);
-				pst.setString(4, "0");
+				pst.setString(4, "3");
 				pst.executeUpdate();
 				String msg="1";
 				obj.put("msg", msg);
