@@ -30,7 +30,7 @@
                     <p class="list-group-item list-group-item-action list-group-item-light p-2" id="compose"><a>Compose</a></p>
                     <p class="list-group-item list-group-item-action list-group-item-light p-2" id="inbox" ><a>Inbox</a></p>
                     <p class="list-group-item list-group-item-action list-group-item-light p-2" id="sentbox">Sent</a></p>
-                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="spam">Spam</a></p>
+                    <p class="list-group-item list-group-item-action list-group-item-light p-2" id="spam" hidden>Spam</a></p>
                     <p class="list-group-item list-group-item-action list-group-item-light p-2" id="binner">Bin</a></p>
                 </div>
             </div>
