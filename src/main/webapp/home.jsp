@@ -39,7 +39,7 @@
                 <!-- Top navigation-->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                     <div class="container-fluid">
-                        <button class="btn btn-primary" onclick="activate()" id="sidebarToggle" >AI Mode</button>
+                        <button class="btn btn-primary" onclick="activate()" id="sidebarToggle">AI Mode</button>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
@@ -48,9 +48,9 @@
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%=session.getAttribute("username") %></a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="#!">AI settings</a>
+                                        <a class="dropdown-item" href="#!" hidden>AI settings</a>
                                         <a class="dropdown-item" href="signup.jsp">Add user</a>
-                                        <a class="dropdown-item" href="#!">General settings</a>
+                                        <a class="dropdown-item" href="#!" hidden>General settings</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="logout.jsp">logout</a>
                                     </div>
@@ -68,7 +68,12 @@
                                       </div>
                                       <div class="modal-body">
                                               
-                                             <p>List our features</p>
+                                             <p>Your new companion for email services</p>
+                                             <ul>
+                                             <li>ML based Spam classification</li>
+                                             <li>Accurate results with upto 99% Accuracy</li>
+                                             <li>Easy to use</li>
+                                             </ul>
                                       </div>
                                   </div>
                     
@@ -117,11 +122,11 @@
                                           <div id="i_table">
                                           <table class="table table-hover" id="t_ibox">
                                           <tr onclick="myFunction()">
-                                          <th>#</th>
+                                          <th hidden>#</th>
                                           <th>From</th>
                                           <th>Subject</th>
                                           <th>Message</th>
-                                         <th>Spam / Ham</th>
+                                         <th class='ai_flag'>Spam / Ham</th>
                                          <!-- th>Action</th-->
                                           </tr>
                                           <%
@@ -142,11 +147,11 @@
                                         				//g_flag=false;
                                         				%>
                                         				<tr class="table-hover my-3" onclick="show_content(this)">
-                                        				<td class="mp-3"><%=rs.getString(1) %></td>
+                                        				<td class="mp-3" hidden><%=rs.getString(1) %></td>
                                         				<td><%=rs.getString(3) %></td>
                                         				<td><%=rs.getString(4) %></td>
                                         				<td><%=rs.getString(5) %></td>
-                                        				<td><%
+                                        				<td class='ai_flag'><%
                                         				String spm=rs.getString(6);
                                         				if(spm.equals("3")){
                                         					out.println("<i class='fa fa-warning' style='font-size:35px;color:blue'></i>");
@@ -320,6 +325,7 @@
                                       <div class="modal-header">
                                           <h4 class="modal-title">Deleted messages</h4>
                                           </div>
+                                          <div><button type="button" class="btn btn-danger">Clear Bin</button>
                                           <div id="i_table">
                                           <table class="table table-hover" id="t_jbox">
                                           <tr onclick="myFunction()">
@@ -428,14 +434,32 @@
         	  //alert(i);
         	}*/
         //alert(rows);
-        var a=0;
+        var a=1;
         function activate(){
         	a=a+1
         	if(a%2==1){
+        		var toggbutt=document.getElementById('sidebarToggle');
+        		toggbutt.style.backgroundColor = "#0D6EFD";
+        	var temp=document.getElementsByClassName('ai_flag');
+        	for (let i = 0; i < temp.length; i++) {
+        		//temp[i].id="temp";
+        		document.getElementsByClassName('ai_flag')[i].style.visibility = 'visible';
+        	    //console.log(temp[i].id);
+        	    
+        	}
         	alert("AI Activated")
         	}
         	else
         		{
+        		var temp=document.getElementsByClassName('ai_flag');
+        		var toggbutt=document.getElementById('sidebarToggle');
+        		toggbutt.style.backgroundColor = "#808080";
+        		for (let i = 0; i < temp.length; i++) {
+            		//temp[i].id="temp";
+            		document.getElementsByClassName('ai_flag')[i].style.visibility = 'hidden';
+            	    //console.log(temp[i].id);
+            	    
+            	}
         		alert("AI Deactivated")
         		}
         }
@@ -521,9 +545,9 @@
           }
         */
         function show_content(x){
-        	alert(x.parentNode.parentNode.id)
+        	//alert(x.parentNode.parentNode.id)
         	if(x.parentNode.parentNode.id=="t_ibox"){
-           	 alert('inbox');
+           	// alert('inbox');
            	 //top layer navigation
            	var inbox_block = document.getElementById("inbox_block");
         	inbox_block.style.display="None";
@@ -606,6 +630,7 @@
         		addSpam.style.display="None";
         		remSpam.style.display="None";
         		sent_block.style.display="None";
+        		del.style.display="none";
     			
     		}
     		
@@ -727,7 +752,7 @@
     		}
     		}//inbox_closes
     		else if(x.parentNode.parentNode.id=="t_sbox"){
-        		alert("sentbox");
+        		//alert("sentbox");
         		var inbox_block = document.getElementById("inbox_block");
             	inbox_block.style.display="None";
             	var sent_block=document.getElementById("sentbox_block");
@@ -874,7 +899,7 @@
         }
         )}*/
         function avoider(x){
-        alert(x);	
+        //alert(x);	
         	
         }
         
