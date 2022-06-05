@@ -1,4 +1,6 @@
 import time
+import re
+from index import phish_call
 from TrainingSetsUtil import *
 from tkinter import Button, Label,Tk,messagebox
 #import tkMessageBox
@@ -48,14 +50,28 @@ def activate():
     #print(msg_data[i])
         temp=0
         mail_msg=msg_data[i]
+        #print(mail_msg)
+        urls_list1=re.findall('http?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+',mail_msg)
+        urls_list2=re.findall('https://(?:[-\w.]|(?:%[\da-fA-F]{2}))+',mail_msg)
+        urls_list=urls_list1+urls_list2
+        #print(urls_list)
+        #print(phish_call(mail_msg))
+        phish_flag=0
+        phish_adder=0
+        for url in urls_list:
+            result_phish=phish_call(url)
+            if(result_phish=='P'):
+                phish_flag=1
+        if(phish_flag==1):
+            phish_adder=1000
         spam_probability = classify(mail_msg, spam_training_set, 0.2)
         ham_probability = classify(mail_msg, ham_training_set, 0.8)
         if spam_probability > ham_probability:
             #print('This mail has been classified as SPAM.')
-            temp=1
+            temp=1+phish_adder
         else:
             #print('This mail has been classified as HAM.')
-            temp=0
+            temp=0+phish_adder
         temp_cur=mydb.cursor()
         temp_table_name=data[1][i]+"_inbox"
         temp_table_id=data[0][i]
@@ -105,6 +121,7 @@ def stopp():
 mylabel=Label(root,text="Admin Panel of Swordmail",pady=20,font=("Arial", 25)).pack()    
 my_butt=Button(root,text="Start Classifier",command=activate,pady=5).pack()
 auto=Button(root,text="Smart mode",command=tensec,pady=5).pack()
+phishing=Button(root,text="Smart mode",command=tensec,pady=5).pack()
 my_butt2=Button(root,text="Quit",command=stopp,pady=5).pack()
 root.mainloop()
 #print(data[3][i][i])

@@ -18,6 +18,7 @@
         <title>home page: <%=session.getAttribute("username") %> </title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <script src="https://kit.fontawesome.com/a52cf978fb.js" crossorigin="anonymous"></script>
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
     </head>
@@ -158,6 +159,12 @@
                                         				}
                                         				else if(spm.equals("1")){
                                         					out.println("<i class='fa fa-warning' style='font-size:35px;color:red'></i>");
+                                        				}
+                                        				else if(spm.equals("1001")){
+                                        					out.println("<i class='fa fa-warning' style='font-size:35px;color:red'></i>"+"<i class='fa-solid fa-anchor-circle-xmark fa-xl'></i>");
+                                        				}
+                                        				else if(spm.equals("1000")){
+                                        					out.println("<i class='fa fa-warning' style='font-size:35px;color:red'></i>"+"<i class='fa-solid fa-anchor-circle-xmark fa-xl'></i>");
                                         				}
                                         				else{
                                         					out.println("<i class='fa fa-check-circle' style='font-size:48px;color:green'></i>");
