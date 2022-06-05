@@ -454,7 +454,7 @@
         	    //console.log(temp[i].id);
         	    
         	}
-        	alert("AI Activated")
+        	//alert("AI Activated")
         	}
         	else
         		{
@@ -467,7 +467,7 @@
             	    //console.log(temp[i].id);
             	    
             	}
-        		alert("AI Deactivated")
+        		//alert("AI Deactivated")
         		}
         }
     	var i_tab=document.getElementById('t_ibox');
